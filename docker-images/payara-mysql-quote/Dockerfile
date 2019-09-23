@@ -1,4 +1,4 @@
-FROM ivonet/payara:5.193
+FROM ivonet/payara
 
 ARG PWD
 LABEL maintainer="IvoNet.nl"

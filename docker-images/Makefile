@@ -136,7 +136,13 @@ rmi-base-images: ## Removes all the base (FROM) images used in the projects
 	baseimgs=$$(find . -type f -name Dockerfile -exec grep ^FROM {} \; | sed 's/FROM //g');\
 	for base in $$baseimgs;                                                   \
 	do                                                                        \
-	    echo $$base;                                                          \
+	    noversion=$$(echo $$base|sed 's/:.*//');                              \
+	    if [ "$$noversion" == "$$base" ];                                     \
+	    then                                                                  \
+	       echo "No version fount, assumong latest";                          \
+	       base="$$base:latest";                                              \
+	    fi;                                                                   \
+	    echo "$$base";                                                        \
 		for cont in $$(docker images -q);                                     \
 		do                                                                    \
 		    cname=$$(docker inspect $$cont|jq '.[0].RepoTags[0]'|sed 's/\"//g') ; \
