@@ -8,17 +8,20 @@ chmod -x /etc/update-motd.d/9?-*
 cat <<EOF >/etc/update-motd.d/10-ivonet
 #!/bin/sh
 cat <<EOT
+
      _____     _ _                 ____
     | ____|___| (_)_ __  ___  ___ / ___|___  _ __
-    |  _| / __| | | '_ \/ __|/ _ \ |   / _ \| '_ \
+    |  _| / __| | | '_ \/ __|/ _ \ |   / _ \| '_ \\\\
     | |__| (__| | | |_) \__ \  __/ |__| (_) | | | |
     |_____\___|_|_| .__/|___/\___|\____\___/|_| |_|
                   |_|
 
-  Welcome to the == Jakarta EE - MicroProfile - workshop
+  Welcome to the Jakarta EE - MicroProfile - workshop
   
-  Created by Ivo Woltring, Talip Ozkeles and Edwin Derks
-  * Twitter : @ivonet, @tozkeles, @edwinderks
+  Created by:
+  * Ivo Woltring  (@ivonet)
+  * Talip Ozkeles (@tozkeles)
+  * Edwin Derks   (@edwinderks)
 
 EOT
 EOF

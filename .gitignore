@@ -3,7 +3,7 @@
 node_modules
 .DS_Store
 target
-
+*.exe
 *.dmg
 *.tar.gz
 *.deb
