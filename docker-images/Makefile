@@ -128,6 +128,15 @@ rmi-latest: ## Removes all the local images from this project with the 'latest' 
 		done                                                                  \
 	done
 
+rmi-base-images: ## Removes all the base (FROM) images used in the projects
+	@echo "Removing all the base (FROM) images used in the projects";         \
+	baseimgs=$$(find . -type f -name Dockerfile -exec grep ^FROM {} \; | sed 's/FROM //g');\
+	for base in $$baseimgs;                                                   \
+	do                                                                        \
+	    echo "Removing base-image: $$base";                                   \
+	    docker rmi $$base 2>/dev/null;                                        \
+	done
+
 rm-containers: stop ## Stops and removes running containers based on the images in this project
 	@echo Removing all created containers from this project;                  \
 	for cont in $$(docker ps -aq);                                            \
