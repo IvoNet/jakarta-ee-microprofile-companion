@@ -100,6 +100,9 @@ clean: rm-containers rmi-version rmi-latest ## Cleans up the mess you made
 		docker rmi $$img;                                                     \
 	done
 
+deep-clean: clean rmi-base-images ## same as clean plus removal of base images
+	@echo "Also removes base images";
+
 rmi-version: ## Removes all the local images from this project with the defined version
 	@echo Removing all images with version $(VERSION) from this project;      \
 	for cont in $$(docker images -q);                                         \
@@ -133,8 +136,16 @@ rmi-base-images: ## Removes all the base (FROM) images used in the projects
 	baseimgs=$$(find . -type f -name Dockerfile -exec grep ^FROM {} \; | sed 's/FROM //g');\
 	for base in $$baseimgs;                                                   \
 	do                                                                        \
-	    echo "Removing base-image: $$base";                                   \
-	    docker rmi $$base 2>/dev/null;                                        \
+	    echo $$base;                                                          \
+		for cont in $$(docker images -q);                                     \
+		do                                                                    \
+		    cname=$$(docker inspect $$cont|jq '.[0].RepoTags[0]'|sed 's/\"//g') ; \
+			if [ $$base == $$cname ];                                         \
+			then                                                              \
+        	    echo "Removing base-image: $$base";                           \
+				docker rmi $$base 2>/dev/null;                                \
+			fi                                                                \
+		done                                                                  \
 	done
 
 rm-containers: stop ## Stops and removes running containers based on the images in this project
