@@ -102,7 +102,7 @@ clean: rm-containers rmi-version rmi-latest ## Cleans up the mess you made
 	done
 
 deep-clean: clean rmi-base-images ## same as clean plus removal of base images
-	@echo "Also removes base images";
+	@echo "Finished.";
 
 rmi-version: ## Removes all the local images from this project with the defined version
 	@echo Removing all images with version $(VERSION) from this project;      \
