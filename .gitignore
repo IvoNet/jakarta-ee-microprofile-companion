@@ -3,3 +3,13 @@
 node_modules
 .DS_Store
 target
+
+*.dmg
+*.tar.gz
+*.deb
+*.vbox-extpack
+*.ova
+research
+_build
+.vagrant
+.tmp
