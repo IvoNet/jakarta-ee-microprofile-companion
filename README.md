@@ -11,3 +11,9 @@ like:
 * USB-stick scripts
 * Etc.
  
+
+# TODO
+
+- thorntail-hollow is not yet working (maybe should be removed)
+- upgraded payara-micro to Java 13
+- Payara-full-mysql-quote not tested and completed yet.
