@@ -79,13 +79,14 @@ docker pull python:3.7.4-alpine3.10
 docker pull busybox
 
 # Some helpful commands in the history
-history -s "docker ps -a"
 history -s "docker run -it --rm --name sh alpine:3.9 /bin/sh"
 history -s "docker run -p 8080:8080 -p 4848:4848 payara/server-full"
 
 # Micro kubernetes
 snap install microk8s --classic
-sudo sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
+sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
+usermod -a -G microk8s vagrant
+microk8s.enable dns dashboard
 
 # minikube
 #curl -sLo /usr/local/bin/minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -93,9 +94,9 @@ sudo sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0
 #snap install minikube
 
 # kubectl
-curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-chmod +x /usr/local/bin/kubectl
-snap install kubectl --classic
+#curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+#chmod +x /usr/local/bin/kubectl
+#snap install kubectl --classic
 
 # Cleanup
 apt-get clean
