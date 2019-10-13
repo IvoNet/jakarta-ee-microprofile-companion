@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
+version=$1
+if [ -z ${version} ]; then
+   read -p 'VM version: ' version
+fi
 vagrant destroy -f
 vagrant box update
 vagrant up
 VBoxManage list vms
-VBoxManage controlvm jakartaee-microprofile-box poweroff
-VBoxManage export jakartaee-microprofile-box -o "$(pwd)/../../usb-stick/VM/jakartaee-microprofile-box.ova"
-vagrant up
+./export.sh "${version}"
