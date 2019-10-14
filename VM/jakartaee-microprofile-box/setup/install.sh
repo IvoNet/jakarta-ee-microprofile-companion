@@ -96,16 +96,6 @@ cd jakarta-ee-microprofile-workshop
 mvn install clean
 rm -fv application-server-project/artifact/*.war
 
-# minikube
-#curl -sLo /usr/local/bin/minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-#chmod +x /usr/local/bin/minikube
-#snap install minikube
-
-# kubectl
-#curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-#chmod +x /usr/local/bin/kubectl
-#snap install kubectl --classic
-
 # Configure nginx
 /home/vagrant/bin/nginx-config.sh
 
