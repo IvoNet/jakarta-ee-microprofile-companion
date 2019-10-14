@@ -42,7 +42,8 @@ apt-get install -q -y \
    unzip \
    qemu-kvm \
    qemu-utils \
-   maven
+   maven \
+   nginx
 
 # https://github.com/moby/moby/issues/20554
 apt-get install --reinstall apparmor
@@ -86,7 +87,14 @@ history -s "docker run -p 8080:8080 -p 4848:4848 payara/server-full"
 snap install microk8s --classic
 sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
 usermod -a -G microk8s vagrant
-microk8s.enable dns dashboard
+microk8s.enable dns storage dashboard registry
+microk8s.status --wait-ready
+
+
+git clone https://github.com/ederks85/jakarta-ee-microprofile-workshop.git
+cd jakarta-ee-microprofile-workshop
+mvn install clean
+rm -fv application-server-project/artifact/*.war
 
 # minikube
 #curl -sLo /usr/local/bin/minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -97,6 +105,9 @@ microk8s.enable dns dashboard
 #curl -sLo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
 #chmod +x /usr/local/bin/kubectl
 #snap install kubectl --classic
+
+# Configure nginx
+/home/vagrant/bin/nginx-config.sh
 
 # Cleanup
 apt-get clean
