@@ -1,9 +1,12 @@
 #!/bin/sh
 # Remove config if already exists
 rm -fv /etc/nginx/sites-enabled/* 2>/dev/null
+rm -fv /etc/nginx/sites-available/* 2>/dev/null
 
 # Retrieve the DASHBOARD IP
-DASH_IP=$(kubectl get services --all-namespaces|grep kubernetes-dashboard| awk '{print $4}')
+DASH_IP=$(microk8s.kubectl get services --all-namespaces|grep kubernetes-dashboard| awk '{print $4}')
+# Get Graphana IP
+GRAPHANA_IP=$(microk8s.kubectl get services --all-namespaces|grep monitoring-grafana| awk '{print $4}')
 
 # Retrieve the secret TOKEN for Bearer
 default_token=$(microk8s.kubectl -n kube-system get secret | grep default-token | cut -d " " -f1)
@@ -15,13 +18,8 @@ password="$(microk8s.kubectl config view|grep password:|awk '{print $2}')"
 # Encode it to base64 for Basic authentication
 BASE_AUTH=$(python3 -c "import base64; print(\"%s\" % str(base64.encodebytes(b\"admin:${password}\"),\"utf-8\").strip().replace(\"\n\",\"\"))")
 
-# Get Graphana IP
-GRAPHANA_IP=$(kubectl get services --all-namespaces|grep monitoring-grafana| awk '{print $4}')
-
-
 # Create the kubernetes config
 cat <<EOF >/etc/nginx/sites-available/kubernetes.conf
-#!/bin/sh
 server {
     listen 80;
     location / {

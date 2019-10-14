@@ -37,13 +37,14 @@ apt-get upgrade -y
 apt-get install -q -y \
    python3-pip \
    cowsay \
+   unzip \
    docker.io \
    docker-compose \
-   unzip \
    qemu-kvm \
    qemu-utils \
    maven \
    nginx
+
 
 # https://github.com/moby/moby/issues/20554
 apt-get install --reinstall apparmor
@@ -60,9 +61,28 @@ chown -R vagrant:vagrant /home/vagrant/.docker
 
 # Docker without sudo...
 usermod -aG docker vagrant
+cat <<EOF >/etc/docker/daemon.json
+{
+  "insecure-registries" : ["192.168.10.100:32000", "192.168.10.100:8888"]
+}
+EOF
 systemctl restart docker.socket docker.service
 systemctl daemon-reload
 systemctl restart docker
+# Start docker registry ui
+su - vagrant -c "docker run -d --name ui -p 8888:80 -e REGISTRY_TITLE=\"Docker Registry\" -e REGISTRY_URL=\"http://192.168.10.100:32000\" joxit/docker-registry-ui:static"
+
+# Micro kubernetes
+snap install microk8s --classic
+sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
+usermod -a -G microk8s vagrant
+microk8s.start
+microk8s.status --wait-ready
+microk8s.enable dns
+microk8s.enable storage
+microk8s.enable dashboard
+microk8s.enable registry
+microk8s.status --wait-ready
 
 # Pre-pull some images to make network unnecessary
 docker pull alpine:latest
@@ -72,6 +92,7 @@ docker pull openjdk:13-jdk-alpine
 docker pull openjdk:8u212-jdk-slim
 docker pull ivonet/payara:5.193
 docker pull payara/server-full
+docker pull payara/micro:5.193
 docker pull jboss/wildfly:latest
 docker pull mysql:5.7.27
 docker pull phpmyadmin/phpmyadmin:4.7
@@ -79,22 +100,9 @@ docker pull nginx
 docker pull python:3.7.4-alpine3.10
 docker pull busybox
 
-# Some helpful commands in the history
-history -s "docker run -it --rm --name sh alpine:3.9 /bin/sh"
-history -s "docker run -p 8080:8080 -p 4848:4848 payara/server-full"
-
-# Micro kubernetes
-snap install microk8s --classic
-sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
-usermod -a -G microk8s vagrant
-microk8s.enable dns storage dashboard registry
-microk8s.status --wait-ready
-
-
-git clone https://github.com/ederks85/jakarta-ee-microprofile-workshop.git
-cd jakarta-ee-microprofile-workshop
-mvn install clean
-rm -fv application-server-project/artifact/*.war
+su - vagrant -c "git clone https://github.com/ederks85/jakarta-ee-microprofile-workshop.git"
+su - vagrant -c "mvn install clean -f jakarta-ee-microprofile-workshop/pom.xml"
+rm -rfv application-server-project/artifact
 
 # Configure nginx
 /home/vagrant/bin/nginx-config.sh

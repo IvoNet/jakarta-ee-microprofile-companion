@@ -25,13 +25,15 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "ssh/config", destination: "/home/vagrant/.ssh/config"
   config.vm.provision "file", source: "ssh/id_rsa", destination: "/home/vagrant/.ssh/id_rsa"
   config.vm.provision "file", source: "ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
-  config.vm.provision "file", source: "bin/get_token.sh", destination: "/home/vagrant/bin/get_token.sh"
+  config.vm.provision "file", source: "bin/docker-local-reg.sh", destination: "/home/vagrant/bin/docker-local-reg.sh"
+  config.vm.provision "file", source: "bin/reset-registry-ui.sh", destination: "/home/vagrant/bin/reset-registry-ui.sh"
+  config.vm.provision "file", source: "bin/cluster-info.sh", destination: "/home/vagrant/bin/cluster-info.sh"
+  config.vm.provision "file", source: "bin/get-token.sh", destination: "/home/vagrant/bin/get-token.sh"
   config.vm.provision "file", source: "bin/nginx-config.sh", destination: "/home/vagrant/bin/nginx-config.sh"
   config.vm.provision :shell do |s|
     ssh_pub_key = File.readlines("ssh/id_rsa.pub").first.strip
     s.inline = <<-SHELL
         mkdir -p /root/.ssh
-        mkdir -p /home/vagrant/bin
         chmod +x /home/vagrant/bin/*
         echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
         echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
@@ -48,8 +50,8 @@ Vagrant.configure("2") do |config|
         echo "alias micro='microk8s'" >>/home/vagrant/.profile
         echo "alias k8s.creds='cat /var/snap/microk8s/current/credentials/basic_auth.csv'" >>/home/vagrant/.profile
         echo "alias k8s.pwd='microk8s.kubectl config view'" >>/home/vagrant/.profile
-        echo "sudo snap alias microk8s.kubectl kubectl" >>/home/vagrant/.profile
-        echo "sudo snap alias microk8s.istioctl istioctl" >>/home/vagrant/.profile
+        echo "alias kubectl='microk8s.kubectl'" >>/home/vagrant/.profile
+        echo "alias istioctl='microk8s.istioctl'" >>/home/vagrant/.profile
         chmod 600 /home/vagrant/.ssh/*
     SHELL
   end
