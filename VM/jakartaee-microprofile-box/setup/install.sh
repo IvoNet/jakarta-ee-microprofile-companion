@@ -63,7 +63,7 @@ chown -R vagrant:vagrant /home/vagrant/.docker
 usermod -aG docker vagrant
 cat <<EOF >/etc/docker/daemon.json
 {
-  "insecure-registries" : ["192.168.10.100:32000", "192.168.10.100:8888"]
+  "insecure-registries" : ["192.168.10.100:32000", "192.168.10.100:8888", "localhost:32000"]
 }
 EOF
 systemctl restart docker.socket docker.service
@@ -85,27 +85,22 @@ microk8s.enable registry
 microk8s.status --wait-ready
 
 # Pre-pull some images to make network unnecessary
-docker pull alpine:latest
-docker pull alpine:3.9
-docker pull alpine:edge
-docker pull openjdk:13-jdk-alpine
-docker pull openjdk:8u212-jdk-slim
-docker pull ivonet/payara:5.193
-docker pull payara/server-full
+docker pull ivonet/payara-full-jndi-quote:1.0
 docker pull payara/micro:5.193
-docker pull jboss/wildfly:latest
-docker pull mysql:5.7.27
-docker pull phpmyadmin/phpmyadmin:4.7
-docker pull nginx
-docker pull python:3.7.4-alpine3.10
-docker pull busybox
+docker pull payara/server-full:5.193
+docker pull ivonet/mysql-quote-db:1.0
+docker pull openjdk:8u222-jre-slim
+docker pull openjdk:11.0.4-jre-slim
 
 su - vagrant -c "git clone https://github.com/ederks85/jakarta-ee-microprofile-workshop.git"
-su - vagrant -c "mvn install clean -f jakarta-ee-microprofile-workshop/pom.xml"
+su - vagrant -c "mvn -q install clean -f jakarta-ee-microprofile-workshop/pom.xml"
 rm -rfv application-server-project/artifact
 
 # Configure nginx
 /home/vagrant/bin/nginx-config.sh
+
+# IPTables
+iptables -P FORWARD ACCEPT
 
 # Cleanup
 apt-get clean
