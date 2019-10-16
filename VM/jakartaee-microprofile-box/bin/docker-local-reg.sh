@@ -1,9 +1,10 @@
 #!/bin/bash
+PREFIX=localhost:32000
 for image in $(docker image ls --format '{{.Repository}}:{{.Tag}}'); do
     if [[ $image == *"-project"* ]]; then
-      docker tag ${image} 192.168.10.100:32000/${image}
-      docker push 192.168.10.100:32000/${image}
+      docker tag ${image} ${PREFIX}/${image}
+      docker push ${PREFIX}/${image}
       docker rmi ${image}
-      docker rmi 192.168.10.100:32000/${image}
+      docker rmi ${PREFIX}/${image}
     fi
 done

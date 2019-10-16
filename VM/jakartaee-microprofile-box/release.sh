@@ -6,5 +6,6 @@ fi
 vagrant destroy -f
 vagrant box update
 vagrant up
+./resize-vm.sh
 VBoxManage list vms
 ./export.sh "${version}"
