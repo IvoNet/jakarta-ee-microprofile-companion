@@ -28,14 +28,17 @@ VBoxManage clonehd ${VMDK} "cloned.vdi" --format vdi
 echo "Resizing: ${VMDK}"
 VBoxManage modifyhd "cloned.vdi" --resize ${VM_SIZE}
 
+vboxmanage storagectl ${VM_NAME} --name 'SCSI' --remove
 deldisk ${VMDK}
+
 VBoxManage clonehd cloned.vdi ${VM_NAME}.vmdk --format vmdk
 
 deldisk cloned.vdi
 
-vboxmanage storagectl ${VM_NAME} --name 'SCSI' --remove
+echo "Adding SCSI driver"
 vboxmanage storagectl ${VM_NAME} --name 'SCSI' --add scsi --controller LSILogic
 
+echo "Adding hdd ${VM_NAME}.vmdk"
 VBoxManage storageattach ${VM_NAME} \
                          --storagectl "SCSI" \
                          --device 0 \
@@ -43,6 +46,7 @@ VBoxManage storageattach ${VM_NAME} \
                          --type hdd \
                          --medium ${VM_NAME}.vmdk
 
+echo "Adding the configdrive hdd"
 VBoxManage storageattach ${VM_NAME} \
                          --storagectl "SCSI" \
                          --device 0 \

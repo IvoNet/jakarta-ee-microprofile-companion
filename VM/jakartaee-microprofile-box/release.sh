@@ -5,5 +5,4 @@ if [ -z ${version} ]; then
 fi
 ./instance.sh
 ./resize-vm.sh
-VBoxManage list vms
 ./export.sh "${version}"

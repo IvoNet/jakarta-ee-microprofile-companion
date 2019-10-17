@@ -21,6 +21,11 @@ cat <<EOT
   Created by:
   * Ivo Woltring  (@ivonet)
 
+  Host URLs:
+  * http://192.168.10.100/           : k8s API
+  * http://192.168.10.100/dash       : k8s dashboard
+  * http://192.168.10.100:8888       : Docker registry web
+
 EOT
 EOF
 chmod +x /etc/update-motd.d/10-ivonet
@@ -78,7 +83,6 @@ su - vagrant -c "docker run -d --name ui -p 8888:80 -e REGISTRY_TITLE=\"Docker R
 
 # Micro kubernetes
 snap install microk8s --classic
-sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
 usermod -a -G microk8s vagrant
 microk8s.start
 microk8s.status --wait-ready
@@ -86,8 +90,8 @@ microk8s.enable dns
 microk8s.enable storage
 microk8s.enable dashboard
 microk8s.enable registry
-microk8s.enable istio
 microk8s.status --wait-ready
+#sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
 
 # Pre-pull some images to make network unnecessary
 docker pull ivonet/payara-full-jndi-quote:1.0
@@ -96,9 +100,10 @@ docker pull payara/server-full:5.193
 docker pull ivonet/mysql-quote-db:1.0
 docker pull openjdk:8u222-jre-slim
 docker pull openjdk:11.0.4-jre-slim
+docker pull phpmyadmin/phpmyadmin:4.7
 
-su - vagrant -c "git clone https://github.com/ederks85/jakarta-ee-microprofile-workshop.git"
-su - vagrant -c "mvn -q install clean -f jakarta-ee-microprofile-workshop/pom.xml"
+su - vagrant -c "git clone https://github.com/ederks85/jakarta-ee-microprofile-workshop.git" 2>/dev/null
+su - vagrant -c "mvn -q install clean -f jakarta-ee-microprofile-workshop/pom.xml" 2>/dev/null
 rm -rfv application-server-project/artifact
 
 # Configure nginx
@@ -106,4 +111,7 @@ rm -rfv application-server-project/artifact
 
 # Cleanup
 apt-get clean
+
+# Microk8s information
+microk8s.inspect
 

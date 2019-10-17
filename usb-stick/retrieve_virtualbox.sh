@@ -2,10 +2,10 @@
 ###############################################################################
 # Config section.
 ###############################################################################
-# https://download.virtualbox.org/virtualbox/6.0.12/VirtualBox-6.0.12-133076-OSX.dmg
+# https://download.virtualbox.org/virtualbox/6.0.14/VirtualBox-6.0.14-133895-OSX.dmg
 # https://www.virtualbox.org/wiki/Downloads
-VIRTUALBOX_VERSION=6.0.12
-VIRTUALBOX_MINOR_VERSION=133076
+VIRTUALBOX_VERSION=6.0.14
+VIRTUALBOX_MINOR_VERSION=133895
 
 ###############################################################################
 # Please do not edit below this line unless you really know what you are doing

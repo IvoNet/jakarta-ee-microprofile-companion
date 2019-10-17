@@ -25,7 +25,8 @@ Vagrant.configure("2") do |config|
   config.vm.provision "file", source: "ssh/id_rsa", destination: "/home/vagrant/.ssh/id_rsa"
   config.vm.provision "file", source: "ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
   config.vm.provision "file", source: "bin/docker-local-reg.sh", destination: "/home/vagrant/bin/docker-local-reg.sh"
-  config.vm.provision "file", source: "bin/microk8s-application-server-project.sh", destination: "/home/vagrant/bin/microk8s-application-server-project.sh"
+  config.vm.provision "file", source: "bin/prepare-microk8s.sh", destination: "/home/vagrant/bin/prepare-microk8s.sh"
+  config.vm.provision "file", source: "bin/local-registry.sh", destination: "/home/vagrant/bin/local-registry.sh"
   config.vm.provision "file", source: "bin/reset-registry-ui.sh", destination: "/home/vagrant/bin/reset-registry-ui.sh"
   config.vm.provision "file", source: "bin/logs.sh", destination: "/home/vagrant/bin/logs.sh"
   config.vm.provision "file", source: "bin/cluster-info.sh", destination: "/home/vagrant/bin/cluster-info.sh"
@@ -57,4 +58,6 @@ Vagrant.configure("2") do |config|
     SHELL
   end
   config.vm.provision "shell", path: "setup/install.sh"
+  config.vm.provision "shell", path: "bin/local-registry.sh"
+  config.vm.provision "shell", path: "bin/prepare-microk8s.sh"
 end
