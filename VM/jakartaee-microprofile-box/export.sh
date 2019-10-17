@@ -1,27 +1,32 @@
 #!/usr/bin/env bash
 
-CLEAN_UP=0
+CLEAN_UP=1
 VM_NAME=jakartaee-microprofile-box
+
 version=$1
 if [ -z ${version} ]; then
    read -p 'VM version: ' version
 fi
 
 VBoxManage controlvm ${VM_NAME} poweroff 2>/dev/null
-echo "Exporting..."
-VBoxManage export ${VM_NAME} -o "$(pwd)/../../usb-stick/VM/${VM_NAME}_v${version}.ova"
+
+if [[ ${CLEAN_UP} -eq 1 ]]; then
+    rm -fv ../../usb-stick/VM/${VM_NAME}_v*.ova
+    rm -fv ../../usb-stick/${VM_NAME}_v*.zip
+    ./clean-google-drive.sh
+fi
 
 cd "$(pwd)/../../usb-stick/"
+
+echo "Exporting..."
+VBoxManage export ${VM_NAME} -o "VM/${VM_NAME}_v${version}.ova"
+
 
 echo "Compressing..."
 zip -r -0 ${VM_NAME}_v${version}.zip VM
 
 echo "Uploading compressed image to google drive..."
 url=$(gdrive upload --share "${VM_NAME}_v${version}.zip"|grep "anyone"|awk '{print $7}')
-if [[ ${CLEAN_UP} -eq 1 ]]; then
-    rm -f "VM/${VM_NAME}_v${version}.ova"
-    rm -f "${VM_NAME}_v${version}.zip"
-fi
 cd -
 
 if [ -z ${url} ]; then

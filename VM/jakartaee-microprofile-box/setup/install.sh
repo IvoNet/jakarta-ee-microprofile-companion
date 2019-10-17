@@ -20,8 +20,6 @@ cat <<EOT
   
   Created by:
   * Ivo Woltring  (@ivonet)
-  * Talip Ozkeles (@tozkeles)
-  * Edwin Derks   (@edwinderks)
 
 EOT
 EOF
@@ -31,11 +29,17 @@ chmod +x /etc/update-motd.d/10-ivonet
 apt-get update
 apt-get upgrade -y
 
-#snap install docker
+# IPTables
+iptables -P FORWARD ACCEPT
+
+#https://stackoverflow.com/questions/52706347/prevent-prompt-when-apt-install-y-iptables-persistent-on-debian-ubuntu
+echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
+echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 
 # Base dependencies
 apt-get install -q -y \
    python3-pip \
+   iptables-persistent\
    cowsay \
    unzip \
    docker.io \
@@ -82,6 +86,7 @@ microk8s.enable dns
 microk8s.enable storage
 microk8s.enable dashboard
 microk8s.enable registry
+microk8s.enable istio
 microk8s.status --wait-ready
 
 # Pre-pull some images to make network unnecessary
@@ -98,9 +103,6 @@ rm -rfv application-server-project/artifact
 
 # Configure nginx
 /home/vagrant/bin/nginx-config.sh
-
-# IPTables
-iptables -P FORWARD ACCEPT
 
 # Cleanup
 apt-get clean

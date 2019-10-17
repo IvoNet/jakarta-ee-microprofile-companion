@@ -13,4 +13,5 @@ VBoxManage dhcpserver add --ifname "${network_interface}" --ip 192.168.10.2 --ne
 echo "The configured network to use is: ${network_interface}"
 
 
-vboxmanage import "jakartaee-microprofile-box_v${version}.ova"
+VBoxManage import "jakartaee-microprofile-box_v${version}.ova" --options keepnatmacs
+VBoxManage startvm jakartaee-microprofile-box --type headless
