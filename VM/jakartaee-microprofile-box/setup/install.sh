@@ -79,7 +79,7 @@ systemctl restart docker.socket docker.service
 systemctl daemon-reload
 systemctl restart docker
 # Start docker registry ui
-su - vagrant -c "docker run -d --name ui -p 8888:80 -e REGISTRY_TITLE=\"Docker Registry\" -e REGISTRY_URL=\"http://192.168.10.100:32000\" joxit/docker-registry-ui:static"
+su - vagrant -c "docker run -d --name ui --restart always -p 8888:80 -e REGISTRY_TITLE=\"Docker Registry\" -e REGISTRY_URL=\"http://192.168.10.100:32000\" joxit/docker-registry-ui:static"
 
 # Micro kubernetes
 snap install microk8s --classic
@@ -91,7 +91,6 @@ microk8s.enable storage
 microk8s.enable dashboard
 microk8s.enable registry
 microk8s.status --wait-ready
-#sed -i 's/--insecure-bind-address=127.0.0.1/--insecure-bind-address=0.0.0.0/g' /var/snap/microk8s/current/args/kube-apiserver
 
 # Pre-pull some images to make network unnecessary
 docker pull ivonet/payara-full-jndi-quote:1.0
@@ -102,9 +101,12 @@ docker pull openjdk:8u222-jre-slim
 docker pull openjdk:11.0.4-jre-slim
 docker pull phpmyadmin/phpmyadmin:4.7
 
+# Checkout the project and make sure all the dependencies are already downloaded to the local registry
 su - vagrant -c "git clone https://github.com/ederks85/jakarta-ee-microprofile-workshop.git" 2>/dev/null
+su - vagrant -c "cd jakarta-ee-microprofile-workshop && git reset --hard && git checkout solution"
 su - vagrant -c "mvn -q install clean -f jakarta-ee-microprofile-workshop/pom.xml" 2>/dev/null
 rm -rfv application-server-project/artifact
+su - vagrant -c "cd jakarta-ee-microprofile-workshop && git reset --hard && git checkout assignments"
 
 # Configure nginx
 /home/vagrant/bin/nginx-config.sh

@@ -10,8 +10,9 @@ fi
 
 VBoxManage controlvm ${VM_NAME} poweroff 2>/dev/null
 
+#Always cleanup the last ova as it will otherwise be zipped
+rm -fv ../../usb-stick/VM/${VM_NAME}_v*.ova
 if [[ ${CLEAN_UP} -eq 1 ]]; then
-    rm -fv ../../usb-stick/VM/${VM_NAME}_v*.ova
     rm -fv ../../usb-stick/${VM_NAME}_v*.zip
     ./clean-google-drive.sh
 fi
@@ -38,8 +39,8 @@ echo -n ${url}|pbcopy
 echo "Download URL copied to clipboard..: "
 echo "${url}"
 
-#echo "Change the tiny url id 471 please"
-#open https://ivo2u.nl/h2console
-
 echo "You might want to update the text in this document..."
 open http://ivo2u.nl/oI
+
+echo "Change the tiny url id 477 please"
+open https://ivo2u.nl/h2console
