@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+#set -x
 version=$1
 if [ -z ${version} ]; then
    echo "Just provide the version part (e.g. 0.3 or 1.0) from the file you downloaded"
@@ -13,6 +13,6 @@ VBoxManage dhcpserver add --ifname "${network_interface}" --ip 192.168.10.2 --ne
 echo "The configured network to use is: ${network_interface}"
 
 VM_NAME=jakartaee-microprofile-box
-VBoxManage import "${VM_NAME}_v${version}.ova" --vsys 0 --vmname ${VM_NAME}--options keepnatmacs
+VBoxManage import "${VM_NAME}_v${version}.ova" --vsys 0 --vmname ${VM_NAME} --options keepnatmacs
 VBoxManage modifyvm ${VM_NAME} --nic2 hostonly --hostonlyadapter2 "${network_interface}"
 VBoxManage startvm ${VM_NAME} --type headless
