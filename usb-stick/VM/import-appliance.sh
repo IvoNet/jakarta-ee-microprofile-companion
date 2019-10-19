@@ -12,6 +12,7 @@ VBoxManage hostonlyif ipconfig "${network_interface}" --ip 192.168.10.1 --netmas
 VBoxManage dhcpserver add --ifname "${network_interface}" --ip 192.168.10.2 --netmask 255.255.255.0 --lowerip 192.168.10.100 --upperip 192.168.10.200 --enable
 echo "The configured network to use is: ${network_interface}"
 
-
-VBoxManage import "jakartaee-microprofile-box_v${version}.ova" --options keepnatmacs
-VBoxManage startvm jakartaee-microprofile-box --type headless
+VM_NAME=jakartaee-microprofile-box
+VBoxManage import "${VM_NAME}_v${version}.ova" --vsys 0 --vmname ${VM_NAME}--options keepnatmacs
+VBoxManage modifyvm ${VM_NAME} --nic2 hostonly --hostonlyadapter2 "${network_interface}"
+VBoxManage startvm ${VM_NAME} --type headless
