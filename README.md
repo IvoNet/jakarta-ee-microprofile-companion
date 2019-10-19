@@ -42,7 +42,9 @@ cd VM/jakartaee-microprofile-box
 ```
 
 If you want to have a bigger size just the "VM_SIZE" variable in the script to to a number
-calulated this way: <Wanted GB> * 1024 => e.g. 15 * 1024 = 15360
+calulated this way: 
+
+* `<Wanted GB> * 1024` => e.g. `15 * 1024 = 15360`
 
 ## Exporting the VM for distribution
 
