@@ -13,3 +13,4 @@ research
 _build
 .vagrant
 .tmp
+.gd

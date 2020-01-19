@@ -26,8 +26,13 @@ VBoxManage export ${VM_NAME} -o "VM/${VM_NAME}_v${version}.ova"
 echo "Compressing..."
 zip -r -0 ${VM_NAME}_v${version}.zip VM
 
+cd ../../usb-stick
+
 echo "Uploading compressed image to google drive..."
-url=$(gdrive upload --share "${VM_NAME}_v${version}.zip"|grep "anyone"|awk '{print $7}')
+${drive} push -no-prompt "${VM_NAME}_v${version}.zip"
+${drive} pub -quiet "${VM_NAME}_v${version}.zip"
+url=$(drive ls -long |grep "${VM_NAME}_v${version}.zip"|awk '{print "https://drive.google.com/uc?export=download&id="$4}')
+
 cd -
 
 if [ -z ${url} ]; then
@@ -38,6 +43,8 @@ fi
 echo -n ${url}|pbcopy
 echo "Download URL copied to clipboard..: "
 echo "${url}"
+echo $(/Users/iwo16283/dev/ivonet-macbook-install/bin/ivo2u "${url}")
+
 
 echo "You might want to update the text in this document..."
 open http://ivo2u.nl/oI
